@@ -13,7 +13,6 @@ function Square(props) {
 }
 
 class Board extends React.Component {
-
   renderSquare(i) {
     return(
       <Square 
@@ -27,19 +26,6 @@ class Board extends React.Component {
     return (
       <div>
         <div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
         </div>
       </div>
     );
@@ -52,6 +38,8 @@ class Game extends React.Component {
     this.state = {
       history: [{
         squares: Array(9).fill(null),
+        position_col: Array(9).fill(null),
+        position_row: Array(9).fill(null),
       }],
       stepNumber: 0,
       xIsNext: true,
@@ -62,13 +50,23 @@ class Game extends React.Component {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
     const squares = current.squares.slice();
+    const position_col = current.position_col.slice();
+    const position_row = current.position_row.slice();
+    const col = i % 3;
+    const row = Math.floor(i / 3);
+
     if (calculateWinner(squares) || squares[i]){
       return;
     }
     squares[i] = this.state.xIsNext ? 'X' : 'O';
+    position_col[this.state.stepNumber] = col;
+    position_row[this.state.stepNumber] = row;
+
     this.setState({
       history: history.concat([{
         squares: squares,
+        position_col: position_col,
+        position_row: position_row,
       }]),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
@@ -105,8 +103,15 @@ class Game extends React.Component {
       status = 'Winner: ' + winner;
     }
     else{
-      status = 'Next player: ' + (this.state.xIsNext ? 'X': 'O');
+      if(this.state.stepNumber === 9){
+        status = 'draw!!'
+      }
+      else{
+        status = 'Next player: ' + (this.state.xIsNext ? 'X': 'O');
+      }
     }
+    
+    // console.log(this.state.stepNumber)
     return (
       <div className="game">
         <div className="game-board">
@@ -117,6 +122,7 @@ class Game extends React.Component {
         <div className="game-info">
           <div>{status}</div>
           <ol>{moves}</ol>
+          <div>{current.position_col[this.state.stepNumber - 1]} {current.position_row[this.state.stepNumber - 1]}</div>
         </div>
       </div>
     );
