@@ -48,3 +48,11 @@ ol, ul {
 .game-info {
   margin-left: 20px;
 }
+
+.bold {
+  font-weight: bold;
+}
+
+.highright {
+  background-color: yellow;
+}
